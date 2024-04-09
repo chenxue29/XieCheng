@@ -28,10 +28,10 @@ export default function TravelDetail () {
     // 轮播图部分：图片
     const renderImages = () => {
         const images = [
-            require('/Users/cx/Downloads/MyGit/XieCheng/src/assets/article/img_01.jpg'),
-            require('/Users/cx/Downloads/MyGit/XieCheng/src/assets/article/img_02.jpg'),
-            require('/Users/cx/Downloads/MyGit/XieCheng/src/assets/article/img_03.jpg'),
-            require('/Users/cx/Downloads/MyGit/XieCheng/src/assets/article/img_04.jpg')
+            require('../assets/article/img_01.jpg'),
+            require('../assets/article/img_02.jpg'),
+            require('../assets/article/img_03.jpg'),
+            require('../assets/article/img_04.jpg')
         ] 
         const sliderWidth = Dimensions.get('window').width;
         const itemWidth = sliderWidth - 20; // 设置轮播项的宽度，可以根据需要进行调整

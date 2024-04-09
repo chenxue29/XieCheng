@@ -19,7 +19,7 @@ export default function App() {
   // );
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='PublishTravel'>
+      <Stack.Navigator initialRouteName='Mine'>
       <Stack.Screen 
           name='LoginTest' 
           component={LoginTest}
