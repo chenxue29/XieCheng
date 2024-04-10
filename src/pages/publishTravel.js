@@ -13,7 +13,6 @@ import {
   Dimensions,
   RefreshControl,
 } from 'react-native'
-// import ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import * as LocationIQ from 'react-native-locationiq';
@@ -24,7 +23,46 @@ import icon_position from '../assets/icon_position.png';
 import icon_eye_close from '../assets/icon_eye_close.png';
 import icon_eye_open from '../assets/icon_eye_open.png';
 
+const url = '10.101.108.241'
+
 export default function PublishTravel() {
+  const navigation = useNavigation();
+  const [titleInput, setTitleInput] = useState('')
+  const [contentInput, setConInput] = useState('')
+  const [images, setImages] = useState([]);
+  const [province, setProvince] = useState('');
+  const [city, setCity] = useState('');
+  const [open, setOpen] = useState(true);
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // 月份从0开始计数，因此需要加1
+  const currentDay = currentDate.getDate();
+  const date = `${currentYear}年${currentMonth}月${currentDay}日`
+
+  const dealPublish = () => {
+    const requestData = {
+      user_id: 0,
+      title: titleInput,
+      content: contentInput,
+      date: date,
+      state: 0,
+      open: open ? 1 : 0,
+      deleteOr: 0,
+    };
+    const queryParams = new URLSearchParams(requestData).toString();
+    console.log(queryParams)
+    const urlWithParams = `http://${url}:3000/publish?${queryParams}`;
+    fetch(urlWithParams)
+      .then((response) => response.json())
+      .then(() => {
+        // 处理响应数据
+        navigation.navigate('Mine');
+      })
+      .catch((error) => {
+        // 处理请求错误
+        console.error('Error:', error);
+      });
+  };
 
   const renderTabs = () => {
     const navigation = useNavigation();
@@ -33,23 +71,34 @@ export default function PublishTravel() {
         <Text style={styles.concealBtn} onPress={() => navigation.pop()}>取消</Text>
         <Text style={styles.titleTxt}>发表游记</Text>
         <View style={styles.publishContainer}>
-          <Text style={styles.publishBtn}>发表</Text>
+          <Text onPress={dealPublish} style={styles.publishBtn}>发表</Text>
         </View>
       </View>
     );
   }
 
   const mainContent = () => {
+    // 标题
+    const handleTitleChange = (text) => {
+      const hasValue = text.trim() !== '';
+      hasValue && (setTitleInput(text));
+    };
+    console.log('标题：', titleInput)
+    // 内容
+    const handleConChange = (text) => {
+      const hasValue = text.trim() !== '';
+      hasValue && (setConInput(text));
+    };
+    console.log('内容：', contentInput)
     return (
       <View style={styles.mainContainer}>
         <Text style={styles.titleTag}>#</Text>
-        <TextInput style={styles.titleContainer} placeholder="带个标题叭～"></TextInput>
-        <TextInput style={styles.contentContainer} multiline={true} placeholder="这一刻的想法..."></TextInput>
+        <TextInput onChangeText={handleTitleChange} style={styles.titleContainer} placeholder="带个标题叭～"></TextInput>
+        <TextInput onChangeText={handleConChange} style={styles.contentContainer} multiline={true} placeholder="这一刻的想法..."></TextInput>
       </View>
     );
   }
 
-  const [images, setImages] = useState([]);
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -67,6 +116,7 @@ export default function PublishTravel() {
       setImages(newImages);
     }
   };
+
   const handleDeleteImage = (index) => {
     Alert.alert(
       '确认删除',
@@ -90,16 +140,10 @@ export default function PublishTravel() {
     );
   };
 
-  const [province, setProvince] = useState('');
-  const [city, setCity] = useState('');
-  const [open, setOpen] = useState(true);
   const toggleOpen = () => {
     setOpen(!open);
   };
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1; // 月份从0开始计数，因此需要加1
-  const currentDay = currentDate.getDate();
+
   const locationScreen = () => {
     useEffect(() => {
       const getLocation = async () => {

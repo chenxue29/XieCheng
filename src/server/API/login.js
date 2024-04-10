@@ -5,7 +5,7 @@ exports.login = (req,res) =>{
     var password = req.body.password
     var sql = 'select * from user where username = ?'
     db.query(sql, [username], (err, data) => {
-        console.log(data[0])
+        console.log(data)
         if (err) {
           return res.send({
             status: 400,
