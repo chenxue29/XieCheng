@@ -1,13 +1,14 @@
-import React,{useEffect,useState} from "react";
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native'
-import Carousel, { Pagination } from 'react-native-snap-carousel'; 
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native'
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { useNavigation } from '@react-navigation/native';
 
 import icon_arrow from '../assets/icon_arrow.png';
 import icon_eye_close from '../assets/icon_eye_close.png';
 import icon_eye_open from '../assets/icon_eye_open.png';
+import icon_share from '../assets/icon_share.png';
 
-export default function TravelDetail () {
+export default function TravelDetail() {
     const navigation = useNavigation();
     // 导航栏部分：头像+昵称
     const renderTitle = () => {
@@ -17,11 +18,13 @@ export default function TravelDetail () {
                     style={styles.backButton}
                     onPress={() => navigation.pop()}
                 >
-                    <Image style={styles.backImg} source={icon_arrow}/>
+                    <Image style={styles.backImg} source={icon_arrow} />
                 </TouchableOpacity>
-                <Image style={styles.avatarImg} source={require('../assets/favicon.png')}/>
+                <TouchableOpacity onPress={() => navigation.navigate('Mine')}>
+                    <Image style={styles.avatarImg} source={require('../assets/favicon.png')} />
+                </TouchableOpacity>
                 <Text style={styles.userNameTxt}>春天的明知山</Text>
-                <Image style={styles.shareImg} source={require('../assets/icon_share.png')} />
+                <Image style={styles.shareImg} source={icon_share} />
             </View>
         );
     }
@@ -32,46 +35,46 @@ export default function TravelDetail () {
             require('../assets/article/img_02.jpg'),
             require('../assets/article/img_03.jpg'),
             require('../assets/article/img_04.jpg')
-        ] 
+        ]
         const sliderWidth = Dimensions.get('window').width;
         const itemWidth = sliderWidth - 20; // 设置轮播项的宽度，可以根据需要进行调整
         const [activeSlide, setActiveSlide] = React.useState(0);
         return (
             <View style={{ paddingBottom: 30 }}>
-              <Carousel
-                data={images}
-                renderItem={({ item }) => (
-                  <Image source={item} style={{ width: itemWidth, height: 400 }} />
-                )}
-                sliderWidth={sliderWidth}
-                itemWidth={itemWidth}
-                autoplay
-                loop
-                onSnapToItem={(index) => setActiveSlide(index)}
-              />
-              <Pagination
-                dotsLength={images.length}
-                activeDotIndex={activeSlide}
-                containerStyle={{ paddingVertical: 10 }}
-                dotStyle={{
-                  width: 10,
-                  height: 5,
-                  borderRadius: 5,
-                  marginHorizontal: 8,
-                  backgroundColor: 'gray'
-                }}
-                inactiveDotStyle={{
-                  // 自定义非活动状态的小点样式
-                  width: 10,
-                  height: 5,
-                  borderRadius: 5,
-                  marginHorizontal: 8,
-                }}
-                inactiveDotOpacity={0.4}
-                inactiveDotScale={0.8}
-              />
+                <Carousel
+                    data={images}
+                    renderItem={({ item }) => (
+                        <Image source={item} style={{ width: itemWidth, height: 400 }} />
+                    )}
+                    sliderWidth={sliderWidth}
+                    itemWidth={itemWidth}
+                    autoplay
+                    loop
+                    onSnapToItem={(index) => setActiveSlide(index)}
+                />
+                <Pagination
+                    dotsLength={images.length}
+                    activeDotIndex={activeSlide}
+                    containerStyle={{ paddingVertical: 10 }}
+                    dotStyle={{
+                        width: 10,
+                        height: 5,
+                        borderRadius: 5,
+                        marginHorizontal: 8,
+                        backgroundColor: 'gray'
+                    }}
+                    inactiveDotStyle={{
+                        // 自定义非活动状态的小点样式
+                        width: 10,
+                        height: 5,
+                        borderRadius: 5,
+                        marginHorizontal: 8,
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.8}
+                />
             </View>
-          );
+        );
     }
     // 文字内容部分：标题+内容+时间+地点+私密状态(单击切换)
     const renderInfo = () => {
@@ -81,15 +84,15 @@ export default function TravelDetail () {
         };
         return (
             <>
-            <Text style={styles.articleTitleTxt}>记录一个简陋的页面</Text>
-            <Text style={styles.descTxt}>在春天的清晨，微风轻拂着脸颊，带来了一股温暖的气息。阳光透过云层洒下来，照亮了大地，让一切焕发出勃勃生机。树木披上了嫩绿色的新叶，花朵绽放出五彩斑斓的花瓣，散发着芬芳的香气。草地上涌现出一片翠绿的海洋，细嫩的草芽从土壤中钻出来，向着阳光伸展。</Text>
-            <Text style={styles.timeAndLocationTxt}>2024年4月2日  上海 徐汇</Text>
-            <TouchableOpacity onPress={toggleOpen}>
-                { !open ?
-                    (<Image style={styles.openImg} source={require('../assets/icon_eye_close.png')}/>):
-                    (<Image style={styles.openImg} source={require('../assets/icon_eye_open.png')}/>)
-                }
-            </TouchableOpacity>
+                <Text style={styles.articleTitleTxt}>记录一个简陋的页面</Text>
+                <Text style={styles.descTxt}>在春天的清晨，微风轻拂着脸颊，带来了一股温暖的气息。阳光透过云层洒下来，照亮了大地，让一切焕发出勃勃生机。树木披上了嫩绿色的新叶，花朵绽放出五彩斑斓的花瓣，散发着芬芳的香气。草地上涌现出一片翠绿的海洋，细嫩的草芽从土壤中钻出来，向着阳光伸展。</Text>
+                <Text style={styles.timeAndLocationTxt}>2024年4月2日  上海 徐汇</Text>
+                <TouchableOpacity onPress={toggleOpen}>
+                    {!open ?
+                        (<Image style={styles.openImg} source={icon_eye_close} />) :
+                        (<Image style={styles.openImg} source={icon_eye_open} />)
+                    }
+                </TouchableOpacity>
             </>
         );
     }
@@ -98,7 +101,7 @@ export default function TravelDetail () {
         <View style={styles.root}>
             {renderTitle()}
             <ScrollView
-                style={{flex: 1}}
+                style={{ flex: 1 }}
                 showsVerticalScrollIndicator={false}
             >
                 {renderImages()}

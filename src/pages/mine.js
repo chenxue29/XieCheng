@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -10,143 +10,65 @@ import {
     Dimensions,
     RefreshControl,
 } from 'react-native'
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import icon_add from '../assets/icon_add.png';
 import icon_setting from '../assets/icon_setting.png';
+import icon_profile from '../assets/icon_profile.png';
 import FootBar from '../components/foot_bar';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const backgroundImage = ['#F8F8FF','#D6E4FF','#F2FCCF','#D7FAFE','#FFF6D9','#FFE5D7']
+// const [i,setI] = useState(0)
 
-export default function Mine () {
-   
+export default function Mine() {
+
     const [tabIndex, setTabIndex] = useState(0);
+    const [image, setImage] = useState(null);
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        console.log(result);
+        if (!result.canceled) {
+            const newImage = result.assets[0].uri
+            console.log(newImage)
+            setImage(newImage);
+        }
+    };
+
+    const pickBackImage = () => {
+        // const newi = i+1
+        // setI(newi)
+        console.log(i)
+    }
 
     const renderInfo = () => {
-        const styles = StyleSheet.create({
-            avatarLayout: {
-                width: '100%',
-                height: 160,
-                flexDirection: 'row',
-                alignItems: 'flex-end',
-                padding: 18,
-                backgroundColor: '#F8F8FF'
-            },
-            avatarImg: {
-                width: 88,
-                height: 88,
-                resizeMode: 'cover',
-                borderRadius: 48,
-                marginTop: 30,
-            },
-            addImg: {
-                width: 28,
-                height: 28,
-                marginLeft: -25,
-                marginBottom: 2,
-            },
-            nameLayout: {
-                marginLeft: 30,
-                marginTop: 58
-            },
-            nameTxt: {
-                fontSize: 20,
-                flex: 1,
-                color: 'black',
-                fontWeight: 'bold',  
-            },
-            namenologin: {
-                fontSize: 15,
-                flex: 1,
-                color: 'gray',
-            },
-            idLayout: {
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 16,
-                marginBottom: 20,
-            },
-            idTxt: {
-                fontSize: 12,
-                color: '#bbb',
-            },
-            qrcodeImg: {
-                width: 12,
-                height: 12,
-                marginLeft: 6,
-                tintColor: '#bbb'
-            },
-            descTxt: {
-                fontSize: 14,
-                color: 'white',
-                paddingHorizontal: 16,
-            },
-            sexLayout: {
-                width: 32,
-                height: 24,
-                backgroundColor: '#ffffff50',
-                borderRadius: 12,
-                marginTop: 12,
-                marginLeft: 16,
-                justifyContent: 'center',
-                alignItems: 'center',
-            },
-            sexImg: {
-                width: 12,
-                height: 12,
-                resizeMode: 'contain',
-            },
-            infoLayout: {
-                width: '100%',
-                paddingRight: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 20,
-                marginBottom: 28,
-            },
-            infoItem: {
-                alignItems: 'center',
-                paddingHorizontal: 16,
-            },
-            infoValue: {
-                fontSize: 18,
-                color: 'white',
-            },
-            infoLabel: {
-                fontSize: 12,
-                color: '#ddd',
-                marginTop: 6,
-            },
-            infoButton: {
-                height: 32,
-                paddingHorizontal: 16,
-                borderWidth: 1,
-                borderColor: 'white',
-                borderRadius: 16,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginLeft: 16,
-            },
-            editTxt: {
-                fontSize: 14,
-                color: '#ffffff'
-            },
-            settingImg: {
-                width: 20,
-                height: 20,
-                marginLeft: 90,
-                tintColor: 'black'
-            },
-        });
+
         return (
-            <View>
+            <View style={styles.container}>
                 <View style={styles.avatarLayout}>
-                    <Image style={styles.avatarImg} source={require('../assets/favicon.png')} />
-                    {/* <Image style={styles.addImg} source={icon_add} /> */}
+                    <TouchableOpacity>
+                        {image ?
+                            (<Image style={styles.avatarImg} source={{ uri: image }} />) :
+                            (<Image style={styles.avatarImg} source={icon_profile} />)
+                        }
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={pickImage}>
+                        <Image style={styles.addImg} source={icon_add} />
+                    </TouchableOpacity>
                     <View style={styles.nameLayout}>
                         <Text style={styles.nameTxt}>春天的明知山</Text>
                         <Text style={styles.namenologin}>退出登录</Text>
                     </View>
-                    <Image style={styles.settingImg} source={icon_setting} />
+                    <TouchableOpacity>
+                        <Image style={styles.settingImg} source={icon_setting} />
+                    </TouchableOpacity>
                 </View>
             </View>
         );
@@ -336,7 +258,7 @@ export default function Mine () {
                             style={styles.item}
                             onPress={() => navigation.navigate('TravelDetail', { item })}
                         >
-                            <Image style={styles.itemImg} source={item.image}/>
+                            <Image style={styles.itemImg} source={item.image} />
                             <Text style={styles.titleTxt}>{item.title}</Text>
                             <View style={styles.nameLayout}>
                                 <Image style={styles.avatarImg} source={item.avatarUrl} />
@@ -361,7 +283,7 @@ export default function Mine () {
                 {renderTabs()}
                 {renderList()}
             </ScrollView>
-            <FootBar/>
+            <FootBar />
         </View>
     );
 }
@@ -382,4 +304,61 @@ const styles = StyleSheet.create({
         width: '100%',
         flex: 1,
     },
+    // container: {
+    //     position: 'absolute', // 或者使用其他布局方式，如flex等，取决于你的具体需求
+    //     width: '100%', // 设置宽度为100%以覆盖整个视图区域
+    //     height: '100%', // 设置高度为100%以覆盖整个视图区域
+    //     backgroundColor: 'transparent', // 设置背景颜色为透明，以便显示背景图片
+    // },
+    avatarLayout: {
+        width: '100%',
+        height: 160,
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        padding: 18,
+        backgroundColor: '#F8F8FF',
+    },
+    newAvatarLayout: {
+        width: '100%',
+        height: 160,
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        padding: 18,
+        backgroundColor: backgroundImage[0],
+    },
+    avatarImg: {
+        width: 88,
+        height: 88,
+        resizeMode: 'cover',
+        borderRadius: 48,
+        marginTop: 30,
+    },
+    addImg: {
+        width: 28,
+        height: 28,
+        marginLeft: -25,
+        marginBottom: 2,
+    },
+    nameLayout: {
+        marginLeft: 30,
+        marginTop: 58
+    },
+    nameTxt: {
+        fontSize: 20,
+        flex: 1,
+        color: 'black',
+        fontWeight: 'bold',
+    },
+    namenologin: {
+        fontSize: 15,
+        flex: 1,
+        color: 'gray',
+    },
+    settingImg: {
+        width: 20,
+        height: 20,
+        marginLeft: 70,
+        tintColor: 'black'
+    },
+
 })

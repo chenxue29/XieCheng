@@ -17,7 +17,8 @@
     "ios": {
       "infoPlist": {
         "NSCameraUsageDescription": "需要访问相机以选择照片",
-        "NSPhotoLibraryUsageDescription": "需要访问相册以选择照片"
+        "NSPhotoLibraryUsageDescription": "需要访问相册以选择照片",
+        "NSLocationWhenInUseUsageDescription": "需要访问您的位置以获取省份和城市信息。"
       },
       "supportsTablet": true
     },
@@ -29,7 +30,8 @@
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
