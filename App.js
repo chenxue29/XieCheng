@@ -7,8 +7,16 @@ import TravelDetail from './src/pages/travelDetail';
 import Mine from './src/pages/mine';
 import PublishTravel from './src/pages/publishTravel';
 import LoginTest from './src/pages/login_test';
+import AppIndex from './src/pages/appindex';
+import Login from './src/pages/login';
+import Register from './src/pages/register';
+
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import reducer from './src/store/reducers/reducer';
 
 const Stack = createStackNavigator();
+const store = createStore(reducer);
 
 export default function App() {
   // return (
@@ -18,8 +26,33 @@ export default function App() {
   //   </View>
   // );
   return (
+    <Provider store={store}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Mine'>
+      <Stack.Navigator initialRouteName='AppIndex'>
+      <Stack.Screen
+        name='AppIndex'
+        component={AppIndex}
+        options={{
+          headerShown: false,
+          // presentation: 'transparentModal',
+        }}
+        />
+      <Stack.Screen
+        name='Login'
+        component={Login}
+        options={{
+          headerShown: false,
+          // presentation: 'transparentModal',
+        }}
+        />
+      <Stack.Screen
+        name='Register'
+        component={Register}
+        options={{
+          headerShown: false,
+          // presentation: 'transparentModal',
+        }}
+        />
       <Stack.Screen 
           name='LoginTest' 
           component={LoginTest}
@@ -54,6 +87,7 @@ export default function App() {
           />
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }
 
