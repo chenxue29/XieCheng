@@ -4,6 +4,6 @@ let login = require('./API/login')
 let publish = require('./API/publish')
 
 router.post('/login',login.login)
-router.get('/publish',publish.publish)
+router.post('/publish',publish.publish)
 
 module.exports = router
