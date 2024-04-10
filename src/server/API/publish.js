@@ -8,9 +8,10 @@ exports.publish = (req, res) => {
     var state = req.query.state;
     var open = req.query.open;
     var deleteOr = req.query.deleteOr;
+    var position = req.query.position;
     
-    var sql = 'INSERT INTO travel (title, content, date, state, open, deleteOr, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const values = [title, content, date, state, open, deleteOr, user_id];
+    var sql = 'INSERT INTO travel (title, content, date, state, open, deleteOr, position, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [title, content, date, state, open, deleteOr, position, user_id];
     
     db.query(sql, values, (err, data) => {
       if (err) {

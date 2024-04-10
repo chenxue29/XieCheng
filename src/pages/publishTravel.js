@@ -32,12 +32,14 @@ export default function PublishTravel() {
   const [images, setImages] = useState([]);
   const [province, setProvince] = useState('');
   const [city, setCity] = useState('');
+  const position = `${province} ${city}`
   const [open, setOpen] = useState(true);
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1; // 月份从0开始计数，因此需要加1
   const currentDay = currentDate.getDate();
   const date = `${currentYear}年${currentMonth}月${currentDay}日`
+  
 
   const dealPublish = () => {
     const requestData = {
@@ -48,6 +50,7 @@ export default function PublishTravel() {
       state: 0,
       open: open ? 1 : 0,
       deleteOr: 0,
+      position: position
     };
     const queryParams = new URLSearchParams(requestData).toString();
     console.log(queryParams)
