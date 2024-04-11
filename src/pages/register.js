@@ -111,8 +111,8 @@ const users = [
 ];
 
 function Register(props){
-    const [userName, setUserName] = useState('用户名');
-    const [passWord, setPassWord] = useState('密码');
+    const [userName, setUserName] = useState('');
+    const [passWord, setPassWord] = useState('');
     const [userid, setUerid] = useState(0);
     const [userAgree, setUserAgree] = useState(false);
     const [agreeTrue, setAgreeTrue] = useState('');
@@ -175,8 +175,8 @@ function Register(props){
         <SafeAreaView style={styles.safe_area_view}>
             <View style={styles.main}>
                     <Text style={styles.title}>鸭先知 & 明知山</Text>
-                    <TextInput style={styles.user} value={userName} onChangeText={text=>setUserName(text)} />
-                    <TextInput style={styles.user} value={passWord} onChangeText={text=>setPassWord(text)} />
+                    <TextInput style={styles.user} placeholder='请输入用户名' value={userName} onChangeText={text=>setUserName(text)} />
+                    <TextInput style={styles.user} placeholder='密码' value={passWord} onChangeText={text=>setPassWord(text)} />
                     <Pressable style={styles.switch_container} onPress={press}>
                         <Text style={styles.switch} >{agreeTrue}</Text>
                         <Text style={styles.switch_text}>同意用户协议</Text>
