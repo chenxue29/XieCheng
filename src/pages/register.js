@@ -71,6 +71,8 @@ import { useNavigation } from '@react-navigation/native';
 import {connect} from 'react-redux';
 import userLogin from '../store/actions/action';
 
+const url = '10.101.108.241'
+
 const users = [
     {
         id: '00000',
@@ -126,14 +128,39 @@ function Register(props){
         if(userName=='' || passWord==''){
             Alert.alert('请填写完整的用户名或密码！')
         }else if(userAgree===false){
-            Alert.alert('请勾选用户协议！') // 判断有问题
-        }else if(userName=='用户名' || passWord=='密码'){
-            Alert.alert('请填写正确的用户名或密码！')
+            Alert.alert('请勾选用户协议！')
         }else{
-            Alert.alert('注册成功！', userid);
-            checkUser = true;
-            UserLogin({login: 'login', name: userName, userID: userid})
-            navigation.navigate('AppIndex');
+            const requestData = {
+                username: userName,
+                password: passWord,
+            };
+            fetch(`http://${url}:3000/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            }).then((response) => response.json()).then((data) => {
+                console.log(data)
+                if (data.status == 200) {
+                    // 注册成功
+                    UserLogin({login: 'login',name: userName, userID: data.userid});
+                    Alert.alert('注册成功！');
+                    navigation.navigate('AppIndex');
+                } 
+                // else if (data.status == 401) {
+                //     // 用户名失败
+                //     Alert.alert(`${data.message}`);
+                // }else if(data.state == 402){
+                //     Alert.alert(`${data.message}`);
+                // } 
+                else {
+                    // 密码验证失败
+                    Alert.alert(`${data.message}`);
+                }
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
         };
     };
     // 从数据库中判断用户名与密码
