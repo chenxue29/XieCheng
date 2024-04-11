@@ -1,4 +1,4 @@
-import React,{ Component, useState, useEffect } from 'react';
+import React,{ Component, useState } from 'react';
 import {
     View,
     Text,
@@ -24,35 +24,34 @@ function FootBar(props){
     // const {navigation}=props;
     const navigation = useNavigation();
     // const navigation = useNavigation();
-    const {login} = props;
+    const {login,userID} = props;
 
     const clickMine = () => {
         if(login === 'offlogin'){
             navigation.navigate('Login');
         }else{
-            navigation.navigate('Mine');
+            navigation.navigate('Mine',{userId: userID});
         }
     };
     const clickAdd = () => {
         if(login === 'offlogin'){
             navigation.navigate('Login');
         }else{
-            navigation.navigate('PublishTravel');
+            navigation.navigate('PublishTravel',{userId: userID});
         }
     };
     const clickIndex = () => {
         navigation.navigate('AppIndex');
     }
-
     return (
         <View style={styles.foot_container}>
-            <Pressable onPress={clickIndex} style={[styles.foot_button, {backgroundColor: props.indexcolor}]}>
+            <Pressable onPress={clickIndex}>
                 <Text style={styles.foot_index}>首页</Text>
             </Pressable>
             <Pressable onPress={clickAdd}>
                 <Text style={styles.foot_add}>+</Text>
             </Pressable>
-            <Pressable onPress={clickMine} style={[styles.foot_button, {backgroundColor: props.minecolor}]}>
+            <Pressable onPress={clickMine}>
                 <Text style={styles.foot_mine}>我的</Text>
             </Pressable>
         </View>
@@ -71,8 +70,8 @@ const mapStateToProps = (state) => {
   // 将dispatch存入props中
   const mapDispatchToProps = (dispatch) => {
     return{
-        UserLogin: (user) => dispatch(userLogin(
-          {login: user.login, name: user.name, userID: user.userID}
+        UserLogin: (manager) => dispatch(userLogin(
+          {login: manager.login, name: manager.name,userID: manager.userID,}
         ))
     }
   };

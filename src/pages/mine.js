@@ -11,7 +11,7 @@ import {
     RefreshControl,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation,useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import icon_add from '../assets/icon_add.png';
 import icon_setting from '../assets/icon_setting.png';
@@ -26,9 +26,10 @@ let formData = new FormData();
 export default function Mine() {
     // const user_id = 1
     const route = useRoute()
-    // const { userId } = route.params;
-    // console.log("登录页面传来的userId",userId)
-    const user_id = 0
+    const { userId } = route.params;
+    console.log("登录页面传来的userId", userId)
+    const user_id = userId
+
     const [tabIndex, setTabIndex] = useState(0);
     const [image, setImage] = useState(null);
     const [userData, setUserData] = useState([]);
@@ -36,8 +37,8 @@ export default function Mine() {
     const [imageData, setImageData] = useState([])
 
 
-
     useEffect(() => {
+
         fetchUserData()
         fetchTravelData()
         fetchImageData()
@@ -51,7 +52,7 @@ export default function Mine() {
 
             // 更新用户数据状态
             setUserData(data);
-            console.log('用户信息sss', userData[0])
+            // console.log('用户信息sss', userData[0])
         } catch (error) {
             console.error('Error fetching user data:', error);
         }
@@ -65,7 +66,7 @@ export default function Mine() {
 
             // 更新用户数据状态
             setTravelData(data);
-            console.log('游记信息ss', travelData[0])
+            // console.log('游记信息ss', travelData[0])
         } catch (error) {
             console.error('Error fetching user data:', error);
         }
@@ -79,7 +80,7 @@ export default function Mine() {
 
             // 更新用户数据状态
             setImageData(data);
-            console.log('图片信息ss', imageData[0])
+            // console.log('图片信息ss', imageData[0])
         } catch (error) {
             console.error('Error fetching user data:', error);
         }
@@ -92,9 +93,9 @@ export default function Mine() {
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [4, 3],
-            quality: 1,
+            quality: 0.0001,
         });
-        console.log(result);
+        // console.log(result);
         if (!result.canceled) {
             const newImage = result.assets[0].uri
             // console.log(newImage)
@@ -108,14 +109,14 @@ export default function Mine() {
         }
         try {
             formData.append('user_id', 1)
-            console.log(formData.getAll('profile'))
+            // console.log(formData.getAll('profile'))
             const response = await axios.post(`http://${url}:3000/publishProfile`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
             formData = new FormData();
-            console.log(response.data); // 打印后端返回的响应数据
+            // console.log(response.data); // 打印后端返回的响应数据
         } catch (error) {
             formData = new FormData();
             console.error('Error:', error);
@@ -244,7 +245,7 @@ export default function Mine() {
         const closeList = []
         const waitList = []
         const refuseList = []
-        console.log(imageData)
+        // console.log(imageData)
         if (userData.length === 0 || travelData.length === 0 || imageData.length === 0) {
             // 数据尚未加载完成，可以显示加载中的UI或其他处理
             return <Text>Loading...</Text>;
@@ -305,15 +306,15 @@ export default function Mine() {
                     const waitlist = {
                         id: 2,
                         image: travel_image[0],
-                            imageList: travel_image,
-                            title: item.title,
-                            content: item.content,
-                            date: item.date,
-                            position: item.position,
-                            open: item.open,
-                            user_id: userData[0].id,
-                            avatarUrl: userData[0].profile,
-                            name: userData[0].username,
+                        imageList: travel_image,
+                        title: item.title,
+                        content: item.content,
+                        date: item.date,
+                        position: item.position,
+                        open: item.open,
+                        user_id: userData[0].id,
+                        avatarUrl: userData[0].profile,
+                        name: userData[0].username,
                     }
                     waitList.push(waitlist)
                 } else {
@@ -326,15 +327,15 @@ export default function Mine() {
                     const refuselist = {
                         id: 3,
                         image: travel_image[0],
-                            imageList: travel_image,
-                            title: item.title,
-                            content: item.content,
-                            date: item.date,
-                            position: item.position,
-                            open: item.open,
-                            user_id: userData[0].id,
-                            avatarUrl: userData[0].profile,
-                            name: userData[0].username,
+                        imageList: travel_image,
+                        title: item.title,
+                        content: item.content,
+                        date: item.date,
+                        position: item.position,
+                        open: item.open,
+                        user_id: userData[0].id,
+                        avatarUrl: userData[0].profile,
+                        name: userData[0].username,
                     }
                     refuseList.push(refuselist)
                 }
@@ -429,7 +430,7 @@ export default function Mine() {
             return (
                 <View style={styles.listContainer}>
                     {currentList.map((item, index) => {
-                        console.log("传到细节的Item是啥",item)
+                        console.log("传到细节的Item是啥", item)
                         return (
                             <TouchableOpacity
                                 key={`${item.id}-${index}`}

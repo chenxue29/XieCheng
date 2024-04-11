@@ -12,14 +12,14 @@ const client = new OSS({
   bucket: 'xiechengtravel'
 });
 // 将图片文件上传到阿里云存储桶
-async function uploadToAliyun(imagePath, imageName, insertId) {
+async function uploadToAliyun(imagePath, imageName, insertId,user_id) {
   try {
     const result = await client.put(imageName, imagePath);
     console.log('图片上传成功', result.url);
     // 在这里可以将上传成功后的图片URL保存到数据库中
     // imageUrl.push(result.url);
-    var sqlimg = 'insert into image (picture,travel_id) values (?,?)'
-    db.query(sqlimg, [result.url, insertId], (err, result) => {
+    var sqlimg = 'insert into image (picture,travel_id,user_id) values (?,?,?)'
+    db.query(sqlimg, [result.url, insertId,user_id], (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -69,7 +69,7 @@ exports.publish = [
             const imagePath = image.path;
             const imageName = image.filename;
             // 将图片文件上传到阿里云存储桶
-            uploadToAliyun(imagePath, imageName, data.insertId);
+            uploadToAliyun(imagePath, imageName, data.insertId,user_id);
             // // console.log(image)
             // // 读取图片文件内容
             // var imageData = fs.readFileSync(image.path);

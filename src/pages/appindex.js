@@ -1,4 +1,4 @@
-import React,{ Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -18,325 +18,150 @@ import SearchHeader from '../components/search_header';
 import FootBar from '../components/foot_bar';
 import { useNavigation } from '@react-navigation/native';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import userLogin from '../store/actions/action';
+const url = '10.101.108.241'
 
-const Item = ({title, userName, date, height}) => {
-    const navigation = useNavigation();
-    return(
+
+function AppIndex() {
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        
+        getAllInfo();
+        
+    }, []);
+    let travelsLeft = [];
+    let travelsRight = [];
+    const getAllInfo = () => {
+        setLoading(true)
+        fetch(`http://${url}:3000/searchManager`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => response.json()).then((data) => {
+            // console.log(data)
+            // console.log(data.length)
+            const newdata = data.filter(ele => ele.state == '1' && ele.open == 1)
+            console.log(newdata.length)
+            const half = Math.ceil(newdata.length / 2);
+            const firstHalf = newdata.slice(0, half);
+            const secondHalf = newdata.slice(half);
+
+            let index = 0
+            firstHalf.forEach(item => {
+                
+                const left = {
+                    id: index + 1,
+                    image: item.imgurl[0],
+                    imageList: item.imgurl,
+                    title: item.title,
+                    content: item.content,
+                    date: item.date,
+                    position: item.position,
+                    open: item.open,
+                    user_id: item.userID,
+                    avatarUrl: item.profile,
+                    userName: item.username,
+                    height: 300,
+                }
+                travelsLeft.push(left);
+                index++;
+            });
+            let index1 = 0
+            secondHalf.forEach(item => {
+                const right = {
+                    id: index1 + 1,
+                    image: item.imgurl[0],
+                    imageList: item.imgurl,
+                    title: item.title,
+                    content: item.content,
+                    date: item.date,
+                    position: item.position,
+                    open: item.open,
+                    user_id: item.userID,
+                    avatarUrl: item.profile,
+                    userName: item.username,
+                    height: 300,
+                }
+                travelsRight.push(right);
+                index1++;
+            });
+            console.log("左边",travelsLeft)
+            console.log("右边",travelsRight)
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+        setLoading(false)
+    }
+
+    const Item = (props) => {
+        const navigation = useNavigation();
+        console.log("dfi",props.item)
+        return (
             <View style={styles.section}>
-                {/* {data.map(element => {
-                    return(
-                        <Pressable style={styles.item} onPress={()=>{Alert.alert('跳转到展示页面', element.title)}}>
-                            <Image source={{ uri: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg' }} style={styles.image} />
-                            <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{element.title}</Text>
-                            <View style={styles.user}>
-                                <Image source={{ uri: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg' }} style={styles.user_img} />
-                                <Text style={styles.user_name} numberOfLines={1} ellipsizeMode={'tail'}>{element.userName}</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.date}>{element.date}</Text>
-                            </View>
-                        </Pressable>
-                        )
-                })} */}
-                {/* <Pressable style={styles.item} onPress={()=>{Alert.alert('跳转到展示页面', title)}}>
-                    <Image source={{ uri: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg' }} style={styles.image} />
-                    <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{title}</Text>
+                <Pressable style={styles.item} onPress={() => { navigation.navigate('TravelDetail') }}>
+                    <Image source={{ uri: props.item.image }} style={[styles.image, { height: props.item.height }]} />
+                    <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.title}</Text>
                     <View style={styles.user}>
-                        <Image source={{ uri: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg' }} style={styles.user_img} />
-                        <Text style={styles.user_name} numberOfLines={1} ellipsizeMode={'tail'}>{userName}</Text>
+                        <Image source={{ uri: props.item.avatarUrl }} style={styles.user_img} />
+                        <Text style={styles.user_name} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.userName}</Text>
                     </View>
                     <View>
-                        <Text style={styles.date}>{date}</Text>
-                    </View>
-                </Pressable> */}
-                <Pressable style={styles.item} onPress={()=>{navigation.navigate('TravelDetail')}}>
-                    <Image source={{ uri: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg' }} style={[styles.image, {height: height}]} />
-                    <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{title}</Text>
-                    <View style={styles.user}>
-                        <Image source={{ uri: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg' }} style={styles.user_img} />
-                        <Text style={styles.user_name} numberOfLines={1} ellipsizeMode={'tail'}>{userName}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.date}>{date}</Text>
+                        <Text style={styles.date}>{props.item.date}</Text>
                     </View>
                 </Pressable>
             </View>
-    )
-};
-
-function AppIndex(props){
-    const section = [
-        {title: 'waterfall', data: [
-            {
-                id: 1,
-                title: '2024.3.31日的一天',
-                content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-                state: 1,
-                open: 0,
-                delete: 0,
-                userName: '周佳佳',
-                date: '20240331'
-            },
-            {
-                id: 2,
-                title: '2024.4.5日的一天',
-                content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-                state: 1,
-                open: 0,
-                delete: 0,
-                userName: '陈雪',
-                date: '20240331'
-            },
-        ],},
-    ];
-    const image = [
-        {id: 1, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 150},
-        {id: 2, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 180},
-        {id: 3, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 4, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 100},
-        {id: 5, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 200},
-        {id: 6, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 230},
-        {id: 7, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 120},
-        {id: 8, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 250},
-        {id: 9, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 180},
-        {id: 10, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 230},
-        {id: 11, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 170},
-        {id: 12, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 13, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 100},
-        {id: 14, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 15, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 16, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 17, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 18, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 19, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 20, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 21, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 22, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 23, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 24, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-        {id: 25, url: 'https://p1.ssl.qhmsg.com/t01d40f0b5316c5f58d.jpg', height: 220},
-    ];
-    const travelsLeft = [
-        {
-            id: 1,
-            title: '2024.3.31日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '周佳佳',
-            date: '20240331',
-            height: 300,
-        },
-        {
-            id: 2,
-            title: '2024.4.5日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '陈雪',
-            date: '20240331',
-            height: 200,
-        },
-        {
-            id: 3,
-            title: '2024.3.31日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '周佳佳',
-            date: '20240331',
-            height: 250,
-        },
-        {
-            id: 4,
-            title: '2024.4.5日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '陈雪',
-            date: '20240331',
-            height: 100,
-        },
-    ];
-    const travelsRight = [
-        {
-            id: 1,
-            title: '2024.3.31日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '周佳佳',
-            date: '20240331',
-            height: 200,
-        },
-        {
-            id: 2,
-            title: '2024.4.5日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '陈雪',
-            date: '20240331',
-            height: 200,
-        },
-        {
-            id: 3,
-            title: '2024.3.31日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '周佳佳',
-            date: '20240331',
-            height: 200,
-        },
-        {
-            id: 4,
-            title: '2024.4.5日的一天',
-            content: '今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！今天什么都没干，度过了美妙的一天！',
-            state: 1,
-            open: 0,
-            delete: 0,
-            userName: '陈雪',
-            date: '20240331',
-            height: 200,
-        },
-    ];
-    const travels = [
-        {id: 1, data: travelsLeft},
-        // {id: 2, data: travelsRight},//
-    ];
-    const waterfallItem = ({ item }) => {
-        return (  
-            <View style={styles.item}>
-                <Image source={{ uri: item.url }} style={[styles.image, {height: item.height}]} />
-            </View>
-        );
+        )
     };
-
     return (
         <SafeAreaView style={styles.safe_area_view}>
             <SearchHeader />
-            {/* <ScrollView style={styles.scrollView}>
-                <View style={styles.main}>
-                <FlatList
-                    data={image}
-                    renderItem={waterfallItem}
-                    keyExtractor={item => item.id.toString()}
-                    numColumns={2}
-                />
-                </View>
-            </ScrollView> */}
-            {/* 使用flatlist实现瀑布流： */}
-            {/* <SectionList
-             /> */}
-            {/* <FlatList
-                    data={travels}
-                    initialNumToRender={4}
-                    renderItem={({ item }) => <Item {...item} />}
-                    keyExtractor={item => item.id.toString()}
-                    numColumns={2}
-                    style={styles.body}
-                /> */}
-                {/* <SectionList
-                sections={section}
-                keyExtractor={(item, index) => item + index}
-                style={{display: 'flex', flexDirection: 'row'}}
-                renderItem={({item}) => {
-                    return(
-                        <FlatList
-                        data={travels}
-                        initialNumToRender={4}
-                        renderItem={({ item }) => <Item {...item} />}
-                        keyExtractor={item => item.id.toString()}
-                        numColumns={1}
-                        style={styles.body}
-                        />
-                    )
-                }}
-                 /> */}
-                 {/* <View style={styles.section}>
-                    <FlatList
-                    data={travels}
-                    initialNumToRender={4}
-                    renderItem={({ item }) => <Item {...item} />}
-                    keyExtractor={item => item.id.toString()}
-                    numColumns={1}
-                    style={styles.body}
-                    />
-                    <FlatList
-                    data={travels}
-                    initialNumToRender={4}
-                    renderItem={({ item }) => <Item {...item} />}
-                    keyExtractor={item => item.id.toString()}
-                    numColumns={1}
-                    style={styles.body}
-                    />
-                 </View> */}
-                 {/* <FlatList
-                    data={travels}
-                    initialNumToRender={4}
-                    renderItem={({ item }) => <Item {...item} />}
-                    keyExtractor={item => item.id.toString()}
-                    numColumns={1}
-                    style={styles.body}
-                    /> */}
-
-
-                <ScrollView>
-                    <View style={styles.waterfall}>
-                        <View style={styles.waterfall_item}>
-                            {travelsLeft.map(element => {
-                                return(
-                                    <Item {...element} />
-                                    )
-                            })}
-                        </View>
-                        <View style={styles.waterfall_item}>
-                            {travelsRight.map(element => {
-                                    return(
-                                        <Item {...element} />
-                                        )
-                                })}
-                        </View>
+            <ScrollView>
+                <View style={styles.waterfall}>
+                    <View style={styles.waterfall_item}>
+                        {!loading ? (travelsLeft.map(element => {
+                            return (
+                                <Item item={element} key={element.id}/>
+                            )
+                            })):(() => {
+                                return(<div>loading</div>)
+                            })
+                        }
+                        <Text>abb</Text>
                     </View>
-                </ScrollView>
-                {/* <Pressable onPress={()=>{navigation.navigate('登录');}}>
-                    <Text>跳转</Text>
-                </Pressable> */}
-                
-
-                
-            <FootBar indexcolor='rgba(136,136,136, 0.2)' minecolor='white'/>
+                    <View style={styles.waterfall_item}>
+                        {/* {travelsRight.map(element => {
+                            return (
+                                <Item item={element} key={element.id} />
+                            )
+                        })} */}
+                        <Text>aaa</Text>
+                    </View>
+                </View>
+            </ScrollView>
+            <FootBar />
         </SafeAreaView>
-        
+
     );
 };
 
 // 将状态存入props中
 const mapStateToProps = (state) => {
-    return{
-      login: state.login,
-      name: state.name,
-      userID: state.userID,
+    return {
+        login: state.login,
+        name: state.name,
+        userID: state.userID,
     }
-  };
-  // 将dispatch存入props中
-  const mapDispatchToProps = (dispatch) => {
-    return{
+};
+// 将dispatch存入props中
+const mapDispatchToProps = (dispatch) => {
+    return {
         UserLogin: (user) => dispatch(userLogin(
-          {login: user.login, name: user.name, userID: user.userID}
+            { login: user.login, name: user.name, userID: user.userID }
         ))
     }
-  };
-  
+};
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppIndex);

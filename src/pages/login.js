@@ -53,7 +53,10 @@ function Login(props) {
                     // const userData = data.data
                     // setUserId(data.data.id)
                     console.log('id',userId)
+                    UserLogin({login: 'login', userID: data.data.id});
+                    console.log('现在的状态是：', )
                     navigation.navigate('Mine',{userId: data.data.id});
+
                 } else if (data.status == 401) {
                     // 用户名失败
                     Alert.alert('用户名不存在！！！');

@@ -18,7 +18,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Location from 'expo-location';
 import * as LocationIQ from 'react-native-locationiq';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute } from '@react-navigation/native';
 import icon_add_image from '../assets/icon_add_image.png';
 import icon_position from '../assets/icon_position.png';
 import icon_eye_close from '../assets/icon_eye_close.png';
@@ -42,6 +42,9 @@ export default function PublishTravel() {
   const currentDay = currentDate.getDate();
   const date = `${currentYear}年${currentMonth}月${currentDay}日`
 
+  const route = useRoute()
+  const {userId} = route.params;
+  console.log("footBar传来的userid",userId)
   const renderTabs = () => {
     const navigation = useNavigation();
     return (
@@ -85,7 +88,7 @@ export default function PublishTravel() {
       // allowsEditing: true,
       allowsMultipleSelection: true,
       // aspect: [5, 5],
-      quality: 0.001,
+      quality: 0.0001,
     });
     console.log(result);
     if (!result.canceled) {
@@ -175,7 +178,7 @@ export default function PublishTravel() {
     //   });
     if(titleInput&&contentInput&&images.length>0){
       try {
-        formData.append('user_id', 0);
+        formData.append('user_id', userId);
         formData.append('title', titleInput);
         formData.append('content', contentInput);
         formData.append('date', date);
@@ -192,7 +195,7 @@ export default function PublishTravel() {
   
         console.log(response.data); // 打印后端返回的响应数据
         formData = new FormData();
-        navigation.navigate('Mine');
+        navigation.navigate('Mine',{userId: userId});
       } catch (error) {
         formData = new FormData();
         console.error('Error:', error);
