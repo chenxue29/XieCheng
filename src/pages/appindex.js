@@ -22,19 +22,37 @@ import { connect } from 'react-redux';
 import userLogin from '../store/actions/action';
 const url = '10.101.108.241'
 
+let travelsLeft = [];
+let travelsRight = [];
+
+const Item = (props) => {
+    const navigation = useNavigation();
+    return (
+        <View style={styles.section}>
+            <Pressable style={styles.item} onPress={() => { navigation.navigate('TravelDetail') }}>
+                <Image source={{ uri: props.item.image }} style={[styles.image, { height: props.item.height }]} />
+                <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.title}</Text>
+                <View style={styles.user}>
+                    <Image source={{ uri: props.item.avatarUrl }} style={styles.user_img} />
+                    <Text style={styles.user_name} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.userName}</Text>
+                </View>
+                <View>
+                    <Text style={styles.date}>{props.item.date}</Text>
+                </View>
+            </Pressable>
+        </View>
+    )
+};
 
 function AppIndex() {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [leftState, setLeftState] = useState([]);
+    const [rightState, setRightState] = useState([]);
     useEffect(() => {
         
-        getAllInfo();
-        
-    }, []);
-    let travelsLeft = [];
-    let travelsRight = [];
-    const getAllInfo = () => {
-        setLoading(true)
-        fetch(`http://${url}:3000/searchManager`, {
+        async function getAllInfo(){
+            try{
+                fetch(`http://${url}:3000/searchManager`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -63,7 +81,7 @@ function AppIndex() {
                     user_id: item.userID,
                     avatarUrl: item.profile,
                     userName: item.username,
-                    height: 300,
+                    height: 200+Math.random()*50,
                 }
                 travelsLeft.push(left);
                 index++;
@@ -82,61 +100,50 @@ function AppIndex() {
                     user_id: item.userID,
                     avatarUrl: item.profile,
                     userName: item.username,
-                    height: 300,
+                    height: 200+Math.random()*70,
                 }
                 travelsRight.push(right);
                 index1++;
             });
-            console.log("左边",travelsLeft)
-            console.log("右边",travelsRight)
+            // console.log("左边",travelsLeft)
+            setLeftState(travelsLeft)
+            setRightState(travelsRight)
+            // console.log("右边",travelsRight)
         }).catch((error) => {
             console.error('Error:', error);
-        });
-        setLoading(false)
-    }
 
-    const Item = (props) => {
-        const navigation = useNavigation();
-        console.log("dfi",props.item)
-        return (
-            <View style={styles.section}>
-                <Pressable style={styles.item} onPress={() => { navigation.navigate('TravelDetail') }}>
-                    <Image source={{ uri: props.item.image }} style={[styles.image, { height: props.item.height }]} />
-                    <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.title}</Text>
-                    <View style={styles.user}>
-                        <Image source={{ uri: props.item.avatarUrl }} style={styles.user_img} />
-                        <Text style={styles.user_name} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.userName}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.date}>{props.item.date}</Text>
-                    </View>
-                </Pressable>
-            </View>
-        )
-    };
+        });
+            }catch(error){
+            console.error('Error:', error);
+        }
+        }
+        getAllInfo();
+        console.log('刷新了页面')
+        console.log(travelsLeft)
+        setLoading(false);
+        
+    }, []);
+
     return (
         <SafeAreaView style={styles.safe_area_view}>
             <SearchHeader />
             <ScrollView>
                 <View style={styles.waterfall}>
                     <View style={styles.waterfall_item}>
-                        {!loading ? (travelsLeft.map(element => {
+                        {!loading ? (leftState.map(element => {
                             return (
-                                <Item item={element} key={element.id}/>
+                                <Item item={element}/>
                             )
-                            })):(() => {
-                                return(<div>loading</div>)
-                            })
+                            })):(<Text>loading</Text>)
                         }
-                        <Text>abb</Text>
                     </View>
                     <View style={styles.waterfall_item}>
-                        {/* {travelsRight.map(element => {
+                        {!loading ? (rightState.map(element => {
                             return (
-                                <Item item={element} key={element.id} />
+                                <Item item={element} />
                             )
-                        })} */}
-                        <Text>aaa</Text>
+                        })):(<Text>loading</Text>)
+                    }
                     </View>
                 </View>
             </ScrollView>

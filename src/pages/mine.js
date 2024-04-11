@@ -9,6 +9,7 @@ import {
     LayoutChangeEvent,
     Dimensions,
     RefreshControl,
+    Alert,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
@@ -18,17 +19,40 @@ import icon_setting from '../assets/icon_setting.png';
 import icon_profile from '../assets/icon_profile.png';
 import FootBar from '../components/foot_bar';
 
+import { connect } from 'react-redux';
+import userLogin from '../store/actions/action';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const backgroundImage = ['#F8F8FF', '#D6E4FF', '#F2FCCF', '#D7FAFE', '#FFF6D9', '#FFE5D7']
 
 const url = '10.101.108.241'
 let formData = new FormData();
-export default function Mine() {
+
+// 将状态存入props中
+const mapStateToProps = (state) => {
+    return {
+        login: state.login,
+        name: state.name,
+        userID: state.userID,
+    }
+};
+// 将dispatch存入props中
+const mapDispatchToProps = (dispatch) => {
+    return {
+        UserLogin: (user) => dispatch(userLogin(
+            { login: user.login, name: user.name, userID: user.userID }
+        ))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props) {
     // const user_id = 1
     const route = useRoute()
     const { userId } = route.params;
     console.log("登录页面传来的userId", userId)
     const user_id = userId
+    const {UserLogin} =props;
+    const navigation = useNavigation();
 
     const [tabIndex, setTabIndex] = useState(0);
     const [image, setImage] = useState(null);
@@ -144,6 +168,10 @@ export default function Mine() {
             // 数据尚未加载完成，可以显示加载中的UI或其他处理
             return <Text>Loading...</Text>;
         }
+        const offLogin = () => {
+            UserLogin({login: 'offlogin', name: '', userID: 0});
+            navigation.navigate('AppIndex');
+        };
         return (
             <View style={styles.container}>
                 <View style={styles.avatarLayout}>
@@ -158,7 +186,7 @@ export default function Mine() {
                     </TouchableOpacity>
                     <View style={styles.nameLayout}>
                         <Text style={styles.nameTxt}>{userData[0].username}</Text>
-                        <Text style={styles.namenologin}>退出登录</Text>
+                        <Text style={styles.namenologin} onPress={offLogin}>退出登录</Text>
                     </View>
                     <TouchableOpacity>
                         <Image style={styles.settingImg} source={icon_setting} />
@@ -256,7 +284,7 @@ export default function Mine() {
     }
 
     const renderList = () => {
-        const navigation = useNavigation();
+        
         const openList = []
         const closeList = []
         const waitList = []
@@ -476,7 +504,8 @@ export default function Mine() {
             <FootBar indexcolor='white' minecolor='rgba(136,136,136, 0.2)' />
         </View>
     );
-}
+})
+
 
 const styles = StyleSheet.create({
     root: {
