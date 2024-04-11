@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native'
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute } from '@react-navigation/native';
 
 import icon_arrow from '../assets/icon_arrow.png';
 import icon_eye_close from '../assets/icon_eye_close.png';
@@ -10,6 +10,8 @@ import icon_share from '../assets/icon_share.png';
 
 export default function TravelDetail() {
     const navigation = useNavigation();
+    const route = useRoute();
+    const {item} = route.params
     // 导航栏部分：头像+昵称
     const renderTitle = () => {
         return (
@@ -21,21 +23,22 @@ export default function TravelDetail() {
                     <Image style={styles.backImg} source={icon_arrow} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Mine')}>
-                    <Image style={styles.avatarImg} source={require('../assets/favicon.png')} />
+                    <Image style={styles.avatarImg} source={{uri: item.avatarUrl}} />
                 </TouchableOpacity>
-                <Text style={styles.userNameTxt}>春天的明知山</Text>
+                <Text style={styles.userNameTxt}>{item.name}</Text>
                 <Image style={styles.shareImg} source={icon_share} />
             </View>
         );
     }
     // 轮播图部分：图片
     const renderImages = () => {
-        const images = [
-            require('../assets/article/img_01.jpg'),
-            require('../assets/article/img_02.jpg'),
-            require('../assets/article/img_03.jpg'),
-            require('../assets/article/img_04.jpg')
-        ]
+        // const images = [
+        //     require('../assets/article/img_01.jpg'),
+        //     require('../assets/article/img_02.jpg'),
+        //     require('../assets/article/img_03.jpg'),
+        //     require('../assets/article/img_04.jpg')
+        // ]
+        const images = item.imageList
         const sliderWidth = Dimensions.get('window').width;
         const itemWidth = sliderWidth - 20; // 设置轮播项的宽度，可以根据需要进行调整
         const [activeSlide, setActiveSlide] = React.useState(0);
@@ -44,7 +47,7 @@ export default function TravelDetail() {
                 <Carousel
                     data={images}
                     renderItem={({ item }) => (
-                        <Image source={item} style={{ width: itemWidth, height: 400 }} />
+                        <Image source={{uri: item}} style={{ width: itemWidth, height: 400 }} />
                     )}
                     sliderWidth={sliderWidth}
                     itemWidth={itemWidth}
@@ -80,15 +83,16 @@ export default function TravelDetail() {
     const renderInfo = () => {
         const [open, setOpen] = useState(true);
         const toggleOpen = () => {
-            setOpen(!open);
+            
+            // setOpen(!open);
         };
         return (
             <>
-                <Text style={styles.articleTitleTxt}>记录一个简陋的页面</Text>
-                <Text style={styles.descTxt}>在春天的清晨，微风轻拂着脸颊，带来了一股温暖的气息。阳光透过云层洒下来，照亮了大地，让一切焕发出勃勃生机。树木披上了嫩绿色的新叶，花朵绽放出五彩斑斓的花瓣，散发着芬芳的香气。草地上涌现出一片翠绿的海洋，细嫩的草芽从土壤中钻出来，向着阳光伸展。</Text>
-                <Text style={styles.timeAndLocationTxt}>2024年4月2日  上海 徐汇</Text>
+                <Text style={styles.articleTitleTxt}>{item.title}</Text>
+                <Text style={styles.descTxt}>{item.content}</Text>
+                <Text style={styles.timeAndLocationTxt}>{item.date} {item.position}</Text>
                 <TouchableOpacity onPress={toggleOpen}>
-                    {!open ?
+                    {!item.open ?
                         (<Image style={styles.openImg} source={icon_eye_close} />) :
                         (<Image style={styles.openImg} source={icon_eye_open} />)
                     }
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
         width: 18,
         height: 18,
         marginTop: -32,
-        marginLeft: 170,
+        marginLeft: 195,
     },
     avatarImg: {
         width: 40,
