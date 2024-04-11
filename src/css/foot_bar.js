@@ -14,6 +14,13 @@ const styles = StyleSheet.create({
         paddingRight: 50,
         backgroundColor: 'white',
     },
+    foot_button: {
+        width: 80,
+        height: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+    },
     foot_index: {
         fontSize: 20,
     },

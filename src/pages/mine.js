@@ -26,9 +26,9 @@ let formData = new FormData();
 export default function Mine() {
     // const user_id = 1
     const route = useRoute()
-    const { userId } = route.params;
-    console.log("登录页面传来的userId",userId)
-    const user_id = userId
+    // const { userId } = route.params;
+    // console.log("登录页面传来的userId",userId)
+    const user_id = 0
     const [tabIndex, setTabIndex] = useState(0);
     const [image, setImage] = useState(null);
     const [userData, setUserData] = useState([]);
@@ -41,7 +41,6 @@ export default function Mine() {
         fetchUserData()
         fetchTravelData()
         fetchImageData()
-
     }, []);
 
     const fetchUserData = async () => {
@@ -463,7 +462,7 @@ export default function Mine() {
                 {renderTabs()}
                 {renderList()}
             </ScrollView>
-            <FootBar />
+            <FootBar indexcolor='white' minecolor='rgba(136,136,136, 0.2)'/>
         </View>
     );
 }

@@ -66,7 +66,7 @@ const Item = ({title, userName, date, height}) => {
     )
 };
 
-function AppIndex(){
+function AppIndex(props){
     const section = [
         {title: 'waterfall', data: [
             {
@@ -315,7 +315,7 @@ function AppIndex(){
                 
 
                 
-            <FootBar/>
+            <FootBar indexcolor='rgba(136,136,136, 0.2)' minecolor='white'/>
         </SafeAreaView>
         
     );
