@@ -43,43 +43,70 @@ exports.publishProfile = [
   }
 ];
 
-exports.getUserInfo = (req,res) => {
+exports.getUserInfo = (req, res) => {
   var user_id = req.query.user_id
   var sql = 'select * from user where id = ?'
   db.query(sql, [user_id], (err, data) => {
     if (err) {
       return res.send('错误：' + err.message)
-    }else{
+    } else {
       res.send(data)
     }
-    
+
   })
 };
 
-exports.getTravelInfo = (req,res) => {
+exports.getTravelInfo = (req, res) => {
   var user_id = req.query.user_id
   var sql = 'select * from travel where user_id = ?'
   db.query(sql, [user_id], (err, data) => {
     if (err) {
       return res.send('错误：' + err.message)
-    }else{
+    } else {
       res.send(data)
     }
-    
+
   })
 };
 
-exports.getImageInfo = (req,res) => {
+exports.getImageInfo = (req, res) => {
   var user_id = req.query.user_id
   var sql = 'select * from image where user_id = ?'
   db.query(sql, [user_id], (err, data) => {
     if (err) {
       return res.send('错误：' + err.message)
-    }else{
-      console.log('houduan',data)
+    } else {
+      console.log('houduan', data)
       res.send(data)
     }
-    
+
   })
 };
 
+exports.deleteTravel = (req, res) => {
+  var travel_id = req.query.travel_id;
+
+  // 先查询要删除的行数据
+  var selectSql = 'SELECT * FROM travel WHERE id = ?';
+  db.query(selectSql, [travel_id], (selectErr, selectData) => {
+    if (selectErr) {
+      return res.send('查询错误：' + selectErr.message);
+    }
+
+    // 删除操作
+    var deleteSql = 'DELETE FROM travel WHERE id = ?;';
+    db.query(deleteSql, [travel_id], (deleteErr, deleteData) => {
+      if (deleteErr) {
+        return res.send('删除错误：' + deleteErr.message);
+      }
+      var deleteSql = 'DELETE FROM image WHERE travel_id = ?;';
+      db.query(deleteSql, [travel_id], (deleteErr, deleteData) => {
+        if (deleteErr) {
+          return res.send('删除错误：' + deleteErr.message);
+        }
+        console.log('删除行数据：', selectData);
+        res.send('删除成功');
+      })
+    })
+  })
+};

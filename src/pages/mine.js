@@ -59,6 +59,10 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
     const [userData, setUserData] = useState([]);
     const [travelData, setTravelData] = useState([])
     const [imageData, setImageData] = useState([])
+    const [openList, setOpenList] = useState([])
+    const [closeList, setCloseList] = useState([])
+    const [waitList, setWaitList] = useState([])
+    const [refuseList, setRefuseList] = useState([])
 
 
     useEffect(() => {
@@ -109,6 +113,18 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
             console.error('Error fetching user data:', error);
         }
     };
+
+    const handleDelete = async (travelId) => {
+        try {
+          // 发起后端接口调用
+          const response = await fetch(`http://${url}:3000/deleteTravel?travel_id=${travelId}`);
+          const data = await response;
+          console.log('删除结果：', data);
+          // 可以根据需要执行其他逻辑
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
 
     const pickImage = async () => {
 
@@ -298,8 +314,10 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                             position: item.position,
                             open: item.open,
                             user_id: userData[0].id,
+                            travel_id: item.id,
                             avatarUrl: userData[0].profile,
                             name: userData[0].username,
+                            state: item.state,
                         }
                         openList.push(openlist)
                     } else {
@@ -318,9 +336,11 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                             date: item.date,
                             position: item.position,
                             open: item.open,
+                            travel_id: item.id,
                             user_id: userData[0].id,
                             avatarUrl: userData[0].profile,
                             name: userData[0].username,
+                            state: item.state,
                         }
                         closeList.push(closelist)
                     }
@@ -340,9 +360,11 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                         date: item.date,
                         position: item.position,
                         open: item.open,
+                        travel_id: item.id,
                         user_id: userData[0].id,
                         avatarUrl: userData[0].profile,
                         name: userData[0].username,
+                        state: item.state,
                     }
                     waitList.push(waitlist)
                 } else {
@@ -361,43 +383,15 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                         date: item.date,
                         position: item.position,
                         open: item.open,
+                        travel_id: item.id,
                         user_id: userData[0].id,
                         avatarUrl: userData[0].profile,
                         name: userData[0].username,
+                        state: item.state,
                     }
                     refuseList.push(refuselist)
                 }
             })
-
-            // const openList = [{
-            //     id: 0,
-            //     image: imageData[0].picture,
-            //     title: travelData[0].title,
-            //     avatarUrl: userData[0].profile,
-            //     name: userData[0].username,
-            // }]
-            // const closeList = [{
-            //     id: 1,
-            //     image: require('../assets/article/img_02.jpg'),
-            //     title: '啥时候撒哈哈',
-            //     avatarUrl: require('../assets/favicon.png'),
-            //     name: 'aaaaa',
-            // }]
-            // const waitList = [{
-            //     id: 2,
-            //     image: require('../assets/article/img_03.jpg'),
-            //     title: '啥时候撒哈哈',
-            //     avatarUrl: require('../assets/favicon.png'),
-            //     name: 'aaaaa',
-            // }]
-            // const refuseList = [{
-            //     id: 0,
-            //     image: require('../assets/article/img_04.jpg'),
-            //     title: '啥时候撒哈哈',
-            //     avatarUrl: require('../assets/favicon.png'),
-            //     name: 'dddaa',
-            // }]
-
             const currentList = [openList, closeList, waitList, refuseList][tabIndex];
             const styles = StyleSheet.create({
                 listContainer: {
@@ -418,6 +412,13 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                 titleTxt: {
                     fontSize: 14,
                     color: '#333',
+                    marginHorizontal: 10,
+                    marginVertical: 4,
+                },
+                notitleTxt: {
+                    fontSize: 16,
+                    fontWeight: '700',
+                    color: 'red',
                     marginHorizontal: 10,
                     marginVertical: 4,
                 },
@@ -455,21 +456,30 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                     height: 240,
                 },
             })
+
             return (
                 <View style={styles.listContainer}>
                     {currentList.map((item, index) => {
-                        console.log("传到细节的Item是啥", item)
+                        // console.log("传到细节的Item是啥", item)
                         return (
                             <TouchableOpacity
                                 key={`${item.id}-${index}`}
                                 style={styles.item}
                                 onPress={() => navigation.navigate('TravelDetail', { item })}
+                                // onLongPress={() => handleDelete(item.travel_id)}
                             >
                                 <Image style={styles.itemImg} source={{ uri: item.image }} />
-                                <Text style={styles.titleTxt}>{item.title}</Text>
+                                {!(item.state !== '0' && item.state !== '1') ?
+                                    (<Text style={styles.titleTxt}>{item.title}</Text>) :
+                                    (<Text style={styles.notitleTxt}>❌：{item.state}</Text>)
+                                }
+
                                 <View style={styles.nameLayout}>
                                     <Image style={styles.avatarImg} source={{ uri: item.avatarUrl }} />
                                     <Text style={styles.nameTxt}>{item.name}</Text>
+                                    <TouchableOpacity onPress={()=>handleDelete(item.travel_id)}>
+                                    <Text  style={styles.deleteTxt}>删除</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -491,7 +501,7 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                 {renderTabs()}
                 {renderList()}
             </ScrollView>
-            <FootBar indexcolor='white' minecolor='rgba(136,136,136, 0.2)'/>
+            <FootBar indexcolor='white' minecolor='rgba(136,136,136, 0.2)' />
         </View>
     );
 })
@@ -557,6 +567,12 @@ const styles = StyleSheet.create({
         flex: 1,
         color: 'black',
         fontWeight: 'bold',
+    },
+    deleteTxt: {
+        fontSize: 18,
+        flex: 1,
+        color: 'red',
+        fontWeight: '700',
     },
     namenologin: {
         fontSize: 15,

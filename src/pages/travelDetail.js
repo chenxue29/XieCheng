@@ -26,7 +26,10 @@ export default function TravelDetail() {
                     <Image style={styles.avatarImg} source={{uri: item.avatarUrl}} />
                 </TouchableOpacity>
                 <Text style={styles.userNameTxt}>{item.name}</Text>
-                <Image style={styles.shareImg} source={icon_share} />
+                <TouchableOpacity onPress={()=>navigation.navigate('PublishTravel',{item})}>
+                {item.state!=='1'&&<Image style={styles.shareImg} source={icon_share} />}
+                </TouchableOpacity>
+                
             </View>
         );
     }
