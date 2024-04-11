@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     waterfall: {
         display: 'flex',
         flexDirection: 'row',
-        backgroundColor: '#e4f3e9',
+        // backgroundColor: '#e4f3e9',
     },
     waterfall_item: {
         marginLeft: 10,
