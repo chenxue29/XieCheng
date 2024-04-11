@@ -22,8 +22,6 @@ import userLogin from '../store/actions/action';
 
 function FootBar(props){
     // const {navigation}=props;
-    const [indexColor, setIndexColor] = useState('white');
-    const [mineColor, setMineColor] = useState('white');
     const navigation = useNavigation();
     // const navigation = useNavigation();
     const {login} = props;
@@ -34,7 +32,6 @@ function FootBar(props){
         }else{
             navigation.navigate('Mine');
         }
-        navigation.navigate('Mine');
     };
     const clickAdd = () => {
         if(login === 'offlogin'){
@@ -42,7 +39,6 @@ function FootBar(props){
         }else{
             navigation.navigate('PublishTravel');
         }
-        navigation.navigate('PublishTravel');
     };
     const clickIndex = () => {
         navigation.navigate('AppIndex');
