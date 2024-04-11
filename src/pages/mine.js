@@ -11,7 +11,7 @@ import {
     RefreshControl,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import icon_add from '../assets/icon_add.png';
 import icon_setting from '../assets/icon_setting.png';
@@ -24,8 +24,11 @@ const backgroundImage = ['#F8F8FF', '#D6E4FF', '#F2FCCF', '#D7FAFE', '#FFF6D9', 
 const url = '10.101.108.241'
 let formData = new FormData();
 export default function Mine() {
-    const user_id = 1
-
+    // const user_id = 1
+    const route = useRoute()
+    const { userId } = route.params;
+    console.log("登录页面传来的userId",userId)
+    const user_id = userId
     const [tabIndex, setTabIndex] = useState(0);
     const [image, setImage] = useState(null);
     const [userData, setUserData] = useState([]);
@@ -266,6 +269,7 @@ export default function Mine() {
                             date: item.date,
                             position: item.position,
                             open: item.open,
+                            user_id: userData[0].id,
                             avatarUrl: userData[0].profile,
                             name: userData[0].username,
                         }
@@ -286,6 +290,7 @@ export default function Mine() {
                             date: item.date,
                             position: item.position,
                             open: item.open,
+                            user_id: userData[0].id,
                             avatarUrl: userData[0].profile,
                             name: userData[0].username,
                         }
@@ -307,6 +312,7 @@ export default function Mine() {
                             date: item.date,
                             position: item.position,
                             open: item.open,
+                            user_id: userData[0].id,
                             avatarUrl: userData[0].profile,
                             name: userData[0].username,
                     }
@@ -327,6 +333,7 @@ export default function Mine() {
                             date: item.date,
                             position: item.position,
                             open: item.open,
+                            user_id: userData[0].id,
                             avatarUrl: userData[0].profile,
                             name: userData[0].username,
                     }

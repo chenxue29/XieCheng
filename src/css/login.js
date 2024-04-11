@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
         marginTop: 15,
     },
     switch: {
-        width: 10,
-        height: 10,
+        width: 15,
+        height: 15,
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: 'black',

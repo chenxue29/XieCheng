@@ -22,7 +22,7 @@ export default function TravelDetail() {
                 >
                     <Image style={styles.backImg} source={icon_arrow} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Mine')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Mine',{userId:item.user_id})}>
                     <Image style={styles.avatarImg} source={{uri: item.avatarUrl}} />
                 </TouchableOpacity>
                 <Text style={styles.userNameTxt}>{item.name}</Text>
@@ -83,7 +83,7 @@ export default function TravelDetail() {
     const renderInfo = () => {
         const [open, setOpen] = useState(true);
         const toggleOpen = () => {
-            
+
             // setOpen(!open);
         };
         return (
