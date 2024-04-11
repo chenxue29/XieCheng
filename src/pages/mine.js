@@ -12,21 +12,38 @@ import {
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 import icon_add from '../assets/icon_add.png';
 import icon_setting from '../assets/icon_setting.png';
 import icon_profile from '../assets/icon_profile.png';
 import FootBar from '../components/foot_bar';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const backgroundImage = ['#F8F8FF','#D6E4FF','#F2FCCF','#D7FAFE','#FFF6D9','#FFE5D7']
-// const [i,setI] = useState(0)
+const backgroundImage = ['#F8F8FF', '#D6E4FF', '#F2FCCF', '#D7FAFE', '#FFF6D9', '#FFE5D7']
 
+const url = '10.101.108.241'
+let formData = new FormData();
 export default function Mine() {
 
     const [tabIndex, setTabIndex] = useState(0);
     const [image, setImage] = useState(null);
 
+    const dealPublish = async () => {
+        try {
+            formData.append('user_id', 0)
+            const response = await axios.post(`http://${url}:3000/publishProfile`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(response.data); // 打印后端返回的响应数据
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     const pickImage = async () => {
+
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -37,16 +54,30 @@ export default function Mine() {
         console.log(result);
         if (!result.canceled) {
             const newImage = result.assets[0].uri
-            console.log(newImage)
+            // console.log(newImage)
+            const name = result.assets[0].fileName;
+            formData.append('profile', {
+                uri: newImage,
+                name: name,
+                type: 'image/jepg'
+            })
             setImage(newImage);
         }
+        try {
+            formData.append('user_id', 0)
+            console.log(formData.getAll('profile'))
+            const response = await axios.post(`http://${url}:3000/publishProfile`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            formData = new FormData();
+            console.log(response.data); // 打印后端返回的响应数据
+        } catch (error) {
+            formData = new FormData();
+            console.error('Error:', error);
+        }
     };
-
-    const pickBackImage = () => {
-        // const newi = i+1
-        // setI(newi)
-        console.log(i)
-    }
 
     const renderInfo = () => {
 

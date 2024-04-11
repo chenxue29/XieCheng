@@ -14,6 +14,7 @@ import {
   RefreshControl,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import * as Location from 'expo-location';
 import * as LocationIQ from 'react-native-locationiq';
 import axios from 'axios';
@@ -24,14 +25,16 @@ import icon_eye_close from '../assets/icon_eye_close.png';
 import icon_eye_open from '../assets/icon_eye_open.png';
 
 const url = '10.101.108.241'
-
+let formData = new FormData();
 export default function PublishTravel() {
   const navigation = useNavigation();
   const [titleInput, setTitleInput] = useState('')
   const [contentInput, setConInput] = useState('')
   const [images, setImages] = useState([]);
+  const [images64, setImages64] = useState([]);
   const [province, setProvince] = useState('');
   const [city, setCity] = useState('');
+  const position = `${province} ${city}`
   const [open, setOpen] = useState(true);
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -39,36 +42,12 @@ export default function PublishTravel() {
   const currentDay = currentDate.getDate();
   const date = `${currentYear}年${currentMonth}月${currentDay}日`
 
-  const dealPublish = () => {
-    const requestData = {
-      user_id: 0,
-      title: titleInput,
-      content: contentInput,
-      date: date,
-      state: 0,
-      open: open ? 1 : 0,
-      deleteOr: 0,
-    };
-    const queryParams = new URLSearchParams(requestData).toString();
-    console.log(queryParams)
-    const urlWithParams = `http://${url}:3000/publish?${queryParams}`;
-    fetch(urlWithParams)
-      .then((response) => response.json())
-      .then(() => {
-        // 处理响应数据
-        navigation.navigate('Mine');
-      })
-      .catch((error) => {
-        // 处理请求错误
-        console.error('Error:', error);
-      });
-  };
-
   const renderTabs = () => {
     const navigation = useNavigation();
     return (
       <View style={styles.topContainer}>
-        <Text style={styles.concealBtn} onPress={() => navigation.pop()}>取消</Text>
+        <Text style={styles.concealBtn} onPress={() => {navigation.pop() 
+          formData = new FormData()}}>取消</Text>
         <Text style={styles.titleTxt}>发表游记</Text>
         <View style={styles.publishContainer}>
           <Text onPress={dealPublish} style={styles.publishBtn}>发表</Text>
@@ -103,18 +82,125 @@ export default function PublishTravel() {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: false,
-      aspect: [4, 3],
-      quality: 1,
+      // allowsEditing: true,
+      allowsMultipleSelection: true,
+      // aspect: [5, 5],
+      quality: 0.001,
     });
     console.log(result);
     if (!result.canceled) {
-      const newImages = [...images, result.assets[0].uri];
-      if (newImages.length > 9) {
-        return; // 如果已选择照片数量超过九张，则不添加新图片
+      // const newImages = [...images, result.assets[0].uri];
+      const newImages = result.assets.map(asset => asset.uri);
+
+      //9张
+      if (images.length + newImages.length > 9) {
+        Alert.alert(
+          '提示',
+          '选择图片总数超过9张，请移除一些图片后再添加。',
+          [
+            {
+              text: '确定',
+              onPress: () => {
+                // 可以选择在用户关闭警示框后执行一些操作
+              },
+            },
+          ]
+        );
+        return;
       }
-      setImages(newImages);
+      // 将图片数据添加到 FormData 对象中
+      for (let i = 0; i < result.assets.length; i++) {
+        const image = result.assets[i];
+        const name = image.fileName;
+        console.log('ssaaa', image)
+        formData.append('images', {
+          uri: image.uri,
+          name: `${i}_${name}`,
+          type: 'image/jpeg',
+        });
+      }
+      // console.log('ss',formData.get('images'))
+      // setImages(newImages);
+      setImages([...images, ...newImages]);
+      // 将图片传到后端
+      // console.log(newImages)
+      //图片Base64编码
+      // const response = await fetch(newImages[0]);
+      // const blob = await response.blob();
+      // const base64String = await blobToBase64(blob);
+      // // console.log('64',base64String);
+      // const newImages64 = [...images64, base64String];
+      // setImages64(newImages64)
+      // // console.log('64[]', newImages64.length);
+      // }
+      // // 将 Blob 对象转换为 Base64 编码的字符串
+      // function blobToBase64(blob) {
+      //   return new Promise((resolve, reject) => {
+      //     const reader = new FileReader();
+      //     reader.onloadend = () => {
+      //       resolve(reader.result);
+      //     };
+      //     reader.onerror = reject;
+      //     reader.readAsDataURL(blob);
+      //   });
     }
+  };
+
+  const dealPublish = async () => {
+    // const requestData = {
+    //   user_id: 0,
+    //   title: titleInput,
+    //   content: contentInput,
+    //   date: date,
+    //   state: 0,
+    //   open: open ? 1 : 0,
+    //   deleteOr: 0,
+    //   position: position,
+    //   images: formData,
+    //   // images: images,
+    // };
+    // console.log('sss', images)
+
+    // const queryParams = new URLSearchParams(requestData).toString();
+    // const urlWithParams = `http://${url}:3000/publish?${queryParams}`;
+    // fetch(urlWithParams)
+    //   .then((response) => response.json())
+    //   .then(() => {
+    //     // 处理响应数据
+    //     navigation.navigate('Mine');
+    //   })
+    //   .catch((error) => {
+    //     // 处理请求错误
+    //     console.error('Error:', error);
+    //   });
+    if(titleInput&&contentInput&&images.length>0){
+      try {
+        formData.append('user_id', 0);
+        formData.append('title', titleInput);
+        formData.append('content', contentInput);
+        formData.append('date', date);
+        formData.append('state', 0);
+        formData.append('open', open ? 1 : 0);
+        formData.append('deleteOr', 0);
+        formData.append('position', position);
+        console.log('所有图片', formData.getAll('images'));
+        const response = await axios.post(`http://${url}:3000/publish`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        console.log(response.data); // 打印后端返回的响应数据
+        formData = new FormData();
+        navigation.navigate('Mine');
+      } catch (error) {
+        formData = new FormData();
+        console.error('Error:', error);
+      }
+    }else{
+      Alert.alert("请输入完整的游记信息")
+    }
+    
   };
 
   const handleDeleteImage = (index) => {
