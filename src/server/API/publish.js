@@ -12,18 +12,37 @@ const client = new OSS({
   bucket: 'xiechengtravel'
 });
 // 将图片文件上传到阿里云存储桶
-async function uploadToAliyun(imagePath, imageName, insertId,user_id) {
+async function uploadToAliyun(imagePath, imageName, insertId, user_id) {
   try {
     const result = await client.put(imageName, imagePath);
     console.log('图片上传成功', result.url);
     // 在这里可以将上传成功后的图片URL保存到数据库中
     // imageUrl.push(result.url);
     var sqlimg = 'insert into image (picture,travel_id,user_id) values (?,?,?)'
-    db.query(sqlimg, [result.url, insertId,user_id], (err, result) => {
+    db.query(sqlimg, [result.url, insertId, user_id], (err, result) => {
       if (err) {
         console.log(err);
       } else {
         console.log('图片添加成功')
+      }
+    })
+  } catch (err) {
+    console.error('图片上传失败', err);
+  }
+}
+
+async function uploadToAliyun_t(imagePath, imageName, imageId) {
+  try {
+    const result = await client.put(imageName, imagePath);
+    console.log('图片更新成功', result.url);
+    // 在这里可以将上传成功后的图片URL保存到数据库中
+    // imageUrl.push(result.url);
+    var sqlimg = 'update image set picture=? where id=?'
+    db.query(sqlimg, [result.url, imageId], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('图片更新成功')
       }
     })
   } catch (err) {
@@ -69,7 +88,7 @@ exports.publish = [
             const imagePath = image.path;
             const imageName = image.filename;
             // 将图片文件上传到阿里云存储桶
-            uploadToAliyun(imagePath, imageName, data.insertId,user_id);
+            uploadToAliyun(imagePath, imageName, data.insertId, user_id);
             // // console.log(image)
             // // 读取图片文件内容
             // var imageData = fs.readFileSync(image.path);
@@ -116,3 +135,59 @@ exports.publish = [
   }
 ];
 
+exports.update = [
+  upload.array('images'),
+  (req, res) => {
+    var travel_id = req.body.travel_id;
+    var title = req.body.title;
+    var content = req.body.content;
+    var date = req.body.date;
+    var state = req.body.state;
+    var open = req.body.open;
+    var deleteOr = req.body.deleteOr;
+    var position = req.body.position;
+    // 获取上传的图片文件数组
+    const images = req.files;
+    console.log('ssszs', images)
+    var sql = 'UPDATE travel SET title=?, content=?, date=?, state=?, open=?, deleteOr=?, position=? WHERE id=?';
+    const values = [title, content, date, state, open, deleteOr, position, travel_id];
+
+    db.query(sql, values, (err, data) => {
+      if (err) {
+        console.log(err);
+        return res.status(401).json({
+          status: 401,
+          message: '更新游记失败'
+        });
+      } else {
+        // console.log('成功')
+        if (images && images.length > 0) {
+          // 处理每个图片文件
+          var ids = [];
+          var sql = 'SELECT id FROM image WHERE travel_id=?';
+          db.query(sql, [travel_id], (err, data) => {
+            if (err) {
+              console.log(err);
+            } else {
+              data.forEach(row => {
+                ids.push(row.id);
+              });
+              console.log(ids);
+              // 在这里执行上传到阿里云存储桶的逻辑
+              for (var i = 0; i < images.length; i++) {
+                var image = images[i];
+                const imagePath = image.path;
+                const imageName = image.filename;
+                // 将图片文件上传到阿里云存储桶
+                uploadToAliyun_t(imagePath, imageName, ids[i]);
+              }
+            }
+          });
+        }
+        return res.status(200).json({
+          status: 200,
+          message: '更新游记成功'
+        });
+      }
+    });
+  }]

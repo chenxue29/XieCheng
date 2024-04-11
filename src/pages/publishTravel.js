@@ -57,7 +57,15 @@ export default function PublishTravel() {
         }}>取消</Text>
         <Text style={styles.titleTxt}>发表游记</Text>
         <View style={styles.publishContainer}>
-          <Text onPress={dealPublish} style={styles.publishBtn}>发表</Text>
+        {item ?
+          (<>
+            <Text onPress={()=>dealUpdate(item.travel_id)} style={styles.publishBtn}>发表</Text>
+          </>) :
+          (<>
+            <Text onPress={dealPublish} style={styles.publishBtn}>发表</Text>
+          </>)
+        }
+          
         </View>
       </View>
     );
@@ -81,9 +89,9 @@ export default function PublishTravel() {
         <Text style={styles.titleTag}>#</Text>
         {item ?
           (<>
-            <TextInput onChangeText={handleTitleChange} style={styles.titleContainer} value={item.title} placeholder="带个标题叭～"></TextInput>
-            <TextInput onChangeText={handleConChange} style={styles.contentContainer} value={item.content} multiline={true} placeholder="这一刻的想法..."></TextInput></>
-          ) :
+            <TextInput onChangeText={handleTitleChange} style={styles.titleContainer} placeholder={item.title}></TextInput>
+            <TextInput onChangeText={handleConChange} style={styles.contentContainer} multiline={true} placeholder={item.content}></TextInput>
+          </>) :
           (<>
             <TextInput onChangeText={handleTitleChange} style={styles.titleContainer} placeholder="带个标题叭～"></TextInput>
             <TextInput onChangeText={handleConChange} style={styles.contentContainer} multiline={true} placeholder="这一刻的想法..."></TextInput>
@@ -207,7 +215,37 @@ export default function PublishTravel() {
 
         console.log(response.data); // 打印后端返回的响应数据
         formData = new FormData();
-        navigation.navigate('Mine', { userId: userId });
+        navigation.navigate('Mine', { userId: userId});
+      } catch (error) {
+        formData = new FormData();
+        console.error('Error:', error);
+      }
+    } else {
+      Alert.alert("请输入完整的游记信息")
+    }
+
+  };
+  const dealUpdate = async (travel_id) => {
+    if (titleInput && contentInput && images.length > 0) {
+      try {
+        formData.append('travel_id', travel_id);
+        formData.append('title', titleInput);
+        formData.append('content', contentInput);
+        formData.append('date', date);
+        formData.append('state', 0);
+        formData.append('open', open ? 1 : 0);
+        formData.append('deleteOr', 0);
+        formData.append('position', position);
+        console.log('所有图片', formData.getAll('images'));
+        const response = await axios.post(`http://${url}:3000/update`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        console.log(response.data); // 打印后端返回的响应数据
+        formData = new FormData();
+        navigation.navigate('Mine', { userId: item.user_id});
       } catch (error) {
         formData = new FormData();
         console.error('Error:', error);

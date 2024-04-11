@@ -59,10 +59,10 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
     const [userData, setUserData] = useState([]);
     const [travelData, setTravelData] = useState([])
     const [imageData, setImageData] = useState([])
-    const [openList, setOpenList] = useState([])
-    const [closeList, setCloseList] = useState([])
-    const [waitList, setWaitList] = useState([])
-    const [refuseList, setRefuseList] = useState([])
+    const [openlist, setOpenList] = useState([])
+    const [closelist, setCloseList] = useState([])
+    const [waitlist, setWaitList] = useState([])
+    const [refuselist, setRefuseList] = useState([])
 
 
     useEffect(() => {
@@ -188,9 +188,9 @@ export default connect(mapStateToProps, mapDispatchToProps) (function Mine(props
                         <Text style={styles.nameTxt}>{userData[0].username}</Text>
                         <Text style={styles.namenologin} onPress={offLogin}>退出登录</Text>
                     </View>
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                         <Image style={styles.settingImg} source={icon_setting} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             </View>
         );

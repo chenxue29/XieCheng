@@ -7,6 +7,7 @@ let appIndex = require('./API/appindex')
 
 router.post('/login',login.login)
 router.post('/publish',publish.publish)
+router.post('/update',publish.update)
 router.post('/publishProfile',mine.publishProfile)
 router.get('/getUserInfo',mine.getUserInfo)
 router.get('/getTravelInfo',mine.getTravelInfo)
