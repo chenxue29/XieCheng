@@ -19,7 +19,7 @@ async function uploadToAliyun(imagePath, imageName, insertId) {
     // 在这里可以将上传成功后的图片URL保存到数据库中
     // imageUrl.push(result.url);
     var sqlimg = 'insert into image (picture,travel_id) values (?,?)'
-    db.query(sqlimg, [result.url,insertId], (err, result) => {
+    db.query(sqlimg, [result.url, insertId], (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -30,6 +30,7 @@ async function uploadToAliyun(imagePath, imageName, insertId) {
     console.error('图片上传失败', err);
   }
 }
+
 exports.publish = [
   upload.array('images'),
   (req, res) => {
@@ -46,10 +47,8 @@ exports.publish = [
     const images = req.files;
     console.log('ssszs', images)
 
-
     var sql = 'INSERT INTO travel (title, content, date, state, open, deleteOr, position, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
     const values = [title, content, date, state, open, deleteOr, position, user_id];
-    
 
     db.query(sql, values, (err, data) => {
       if (err) {
@@ -87,7 +86,7 @@ exports.publish = [
           }
 
           // 在这里将 base64Images 存储到数据库中或进行其他处理
-        
+
           // 返回成功响应
           // res.status(200).json({ success: true });
 
@@ -116,3 +115,4 @@ exports.publish = [
     });
   }
 ];
+
