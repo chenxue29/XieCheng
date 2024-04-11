@@ -45,13 +45,13 @@ function FootBar(props){
     }
     return (
         <View style={styles.foot_container}>
-            <Pressable onPress={clickIndex}>
+            <Pressable onPress={clickIndex} style={[styles.foot_button, {backgroundColor: props.indexcolor}]}>
                 <Text style={styles.foot_index}>首页</Text>
             </Pressable>
             <Pressable onPress={clickAdd}>
                 <Text style={styles.foot_add}>+</Text>
             </Pressable>
-            <Pressable onPress={clickMine}>
+            <Pressable onPress={clickMine} style={[styles.foot_button, {backgroundColor: props.minecolor}]}>
                 <Text style={styles.foot_mine}>我的</Text>
             </Pressable>
         </View>

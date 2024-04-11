@@ -237,7 +237,7 @@ function AppIndex() {
                     </View>
                 </View>
             </ScrollView>
-            <FootBar />
+            <FootBar indexcolor='rgba(136,136,136, 0.2)' minecolor='white'/>
         </SafeAreaView>
 
     );
