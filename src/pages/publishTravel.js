@@ -123,12 +123,6 @@ export default function PublishTravel() {
       // setImages(newImages);
       setImages([...images, ...newImages]);
       // 将图片传到后端
-
-
-
-
-
-
       // console.log(newImages)
       //图片Base64编码
       // const response = await fetch(newImages[0]);
@@ -179,29 +173,34 @@ export default function PublishTravel() {
     //     // 处理请求错误
     //     console.error('Error:', error);
     //   });
-    try {
-      formData.append('user_id', 0);
-      formData.append('title', titleInput);
-      formData.append('content', contentInput);
-      formData.append('date', date);
-      formData.append('state', 0);
-      formData.append('open', open ? 1 : 0);
-      formData.append('deleteOr', 0);
-      formData.append('position', position);
-      console.log('所有图片', formData.getAll('images'));
-      const response = await axios.post(`http://${url}:3000/publish`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log(response.data); // 打印后端返回的响应数据
-      formData = new FormData();
-      navigation.navigate('Mine');
-    } catch (error) {
-      formData = new FormData();
-      console.error('Error:', error);
+    if(titleInput&&contentInput&&images.length>0){
+      try {
+        formData.append('user_id', 0);
+        formData.append('title', titleInput);
+        formData.append('content', contentInput);
+        formData.append('date', date);
+        formData.append('state', 0);
+        formData.append('open', open ? 1 : 0);
+        formData.append('deleteOr', 0);
+        formData.append('position', position);
+        console.log('所有图片', formData.getAll('images'));
+        const response = await axios.post(`http://${url}:3000/publish`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        console.log(response.data); // 打印后端返回的响应数据
+        formData = new FormData();
+        navigation.navigate('Mine');
+      } catch (error) {
+        formData = new FormData();
+        console.error('Error:', error);
+      }
+    }else{
+      Alert.alert("请输入完整的游记信息")
     }
+    
   };
 
   const handleDeleteImage = (index) => {
