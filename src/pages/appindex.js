@@ -212,7 +212,7 @@ function AppIndex(){
     ];
     const travels = [
         {id: 1, data: travelsLeft},
-        // {id: 2, data: travelsRight},
+        // {id: 2, data: travelsRight},//
     ];
     const waterfallItem = ({ item }) => {
         return (  
