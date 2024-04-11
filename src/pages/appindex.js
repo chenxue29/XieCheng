@@ -29,7 +29,7 @@ const Item = (props) => {
     const navigation = useNavigation();
     return (
         <View style={styles.section}>
-            <Pressable style={styles.item} onPress={() => { navigation.navigate('TravelDetail') }}>
+            <Pressable style={styles.item} onPress={() => navigation.navigate('TravelDetail',{item:props.item})}>
                 <Image source={{ uri: props.item.image }} style={[styles.image, { height: props.item.height }]} />
                 <Text style={styles.title} numberOfLines={1} ellipsizeMode={'tail'}>{props.item.title}</Text>
                 <View style={styles.user}>
