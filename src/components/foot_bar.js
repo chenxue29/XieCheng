@@ -29,24 +29,22 @@ function FootBar(props){
     const {login} = props;
 
     const clickMine = () => {
-        // if(login === 'offlogin'){
-        //     navigation.navigate('Login');
-        // }else{
-        //     navigation.navigate('Mine');
-        // }
-        console.log(props.color)
+        if(login === 'offlogin'){
+            navigation.navigate('Login');
+        }else{
+            navigation.navigate('Mine');
+        }
         navigation.navigate('Mine');
     };
     const clickAdd = () => {
-        // if(login === 'offlogin'){
-        //     navigation.navigate('Login');
-        // }else{
-        //     navigation.navigate('PublishTravel');
-        // }
+        if(login === 'offlogin'){
+            navigation.navigate('Login');
+        }else{
+            navigation.navigate('PublishTravel');
+        }
         navigation.navigate('PublishTravel');
     };
     const clickIndex = () => {
-        console.log(props.color)
         navigation.navigate('AppIndex');
     }
 
