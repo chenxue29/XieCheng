@@ -47,6 +47,7 @@ function Login(props) {
                 },
                 body: JSON.stringify(requestData),
             }).then((response) => response.json()).then((data) => {
+                console.log(data)
                 if (data.status == 200) {
                     // 密码验证成功
                     console.log("我的登录信息",data.data.id);

@@ -49,74 +49,6 @@ function AppIndex() {
     const [leftState, setLeftState] = useState([]);
     const [rightState, setRightState] = useState([]);
     useEffect(() => {
-        
-        async function getAllInfo(){
-            try{
-                fetch(`http://${url}:3000/searchManager`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then((response) => response.json()).then((data) => {
-            // console.log(data)
-            // console.log(data.length)
-            const newdata = data.filter(ele => ele.state == '1' && ele.open == 1)
-            console.log(newdata.length)
-            const half = Math.ceil(newdata.length / 2);
-            const firstHalf = newdata.slice(0, half);
-            const secondHalf = newdata.slice(half);
-
-            let index = 0
-            firstHalf.forEach(item => {
-                
-                const left = {
-                    id: index + 1,
-                    image: item.imgurl[0],
-                    imageList: item.imgurl,
-                    title: item.title,
-                    content: item.content,
-                    date: item.date,
-                    position: item.position,
-                    open: item.open,
-                    user_id: item.userID,
-                    avatarUrl: item.profile,
-                    userName: item.username,
-                    height: 200+Math.random()*50,
-                }
-                travelsLeft.push(left);
-                index++;
-            });
-            let index1 = 0
-            secondHalf.forEach(item => {
-                const right = {
-                    id: index1 + 1,
-                    image: item.imgurl[0],
-                    imageList: item.imgurl,
-                    title: item.title,
-                    content: item.content,
-                    date: item.date,
-                    position: item.position,
-                    open: item.open,
-                    user_id: item.userID,
-                    avatarUrl: item.profile,
-                    userName: item.username,
-                    height: 200+Math.random()*70,
-                }
-                travelsRight.push(right);
-                index1++;
-            });
-            // console.log("左边",travelsLeft)
-            setLeftState(travelsLeft)
-            setRightState(travelsRight)
-            // console.log("右边",travelsRight)
-        }).catch((error) => {
-            console.error('Error:', error);
-
-        });
-            }catch(error){
-            console.error('Error:', error);
-        }
-        }
         getAllInfo();
         console.log('刷新了页面')
         console.log(travelsLeft)
@@ -124,9 +56,167 @@ function AppIndex() {
         
     }, []);
 
+    async function getAllInfo(){
+        try{
+            fetch(`http://${url}:3000/searchManager`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then((response) => response.json())
+    .then((data) => {
+        // console.log(data)
+        // console.log(data.length)
+        travelsLeft = [];
+        travelsRight = [];
+        const newdata = data.filter(ele => ele.state == '1' && ele.open == 1)
+        console.log(newdata.length)
+        const half = Math.ceil(newdata.length / 2);
+        const firstHalf = newdata.slice(0, half);
+        const secondHalf = newdata.slice(half);
+
+        let index = 0
+        firstHalf.forEach(item => {
+            
+            const left = {
+                id: index + 1,
+                image: item.imgurl[0],
+                imageList: item.imgurl,
+                title: item.title,
+                content: item.content,
+                date: item.date,
+                position: item.position,
+                open: item.open,
+                user_id: item.userID,
+                avatarUrl: item.profile,
+                userName: item.username,
+                height: 200+Math.random()*50,
+            }
+            travelsLeft.push(left);
+            index++;
+        });
+        let index1 = 0
+        secondHalf.forEach(item => {
+            const right = {
+                id: index1 + 1,
+                image: item.imgurl[0],
+                imageList: item.imgurl,
+                title: item.title,
+                content: item.content,
+                date: item.date,
+                position: item.position,
+                open: item.open,
+                user_id: item.userID,
+                avatarUrl: item.profile,
+                userName: item.username,
+                height: 200+Math.random()*70,
+            }
+            travelsRight.push(right);
+            index1++;
+        });
+        // console.log("左边",travelsLeft)
+        setLeftState(travelsLeft)
+        setRightState(travelsRight)
+        // console.log("右边",travelsRight)
+    }).catch((error) => {
+        console.error('Error:', error);
+
+    });
+        }catch(error){
+        console.error('Error:', error);
+    }
+    };
+
+    async function searchAllInfo(searchValue){
+        try{
+            fetch(`http://${url}:3000/searchManager`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then((response) => response.json())
+    .then((data) => {
+
+
+        // console.log(data)
+        // console.log(data.length)
+        const newdata = data.filter(ele => ele.state == '1' && ele.open == 1)
+        const searchData = newdata.filter(ele => ele.title.includes(searchValue) || ele.username.includes(searchValue))
+        console.log(searchData.length)
+        if(searchData.length === 0){
+            return Alert.alert('注意', '没有符合要求的游记...')
+        }
+        travelsLeft = [];
+        travelsRight = [];
+        const half = Math.ceil(searchData.length / 2);
+        const firstHalf = searchData.slice(0, half);
+        const secondHalf = searchData.slice(half);
+
+        let index = 0
+        firstHalf.forEach(item => {
+            
+            const left = {
+                id: index + 1,
+                image: item.imgurl[0],
+                imageList: item.imgurl,
+                title: item.title,
+                content: item.content,
+                date: item.date,
+                position: item.position,
+                open: item.open,
+                user_id: item.userID,
+                avatarUrl: item.profile,
+                userName: item.username,
+                height: 200+Math.random()*50,
+            }
+            travelsLeft.push(left);
+            index++;
+        });
+        let index1 = 0
+        secondHalf.forEach(item => {
+            const right = {
+                id: index1 + 1,
+                image: item.imgurl[0],
+                imageList: item.imgurl,
+                title: item.title,
+                content: item.content,
+                date: item.date,
+                position: item.position,
+                open: item.open,
+                user_id: item.userID,
+                avatarUrl: item.profile,
+                userName: item.username,
+                height: 200+Math.random()*70,
+            }
+            travelsRight.push(right);
+            index1++;
+        });
+        console.log("左边",travelsLeft.length)
+        setLeftState(travelsLeft);
+        setRightState(travelsRight);
+        console.log("右边",travelsRight.length)
+    }).catch((error) => {
+        console.error('Error:', error);
+
+    });
+        }catch(error){
+        console.error('Error:', error);
+    }
+    }
+
+    const searchTravels = (searchValue) => {
+        if(searchValue === ''){
+            Alert.alert('注意', '搜索内容不能为空！')
+        }else{
+            // Alert.alert(`${searchValue}`);
+            searchAllInfo(searchValue);
+        }
+        
+    };
+
     return (
         <SafeAreaView style={styles.safe_area_view}>
-            <SearchHeader />
+            <SearchHeader onSearch={searchTravels} reFresh={getAllInfo}/>
             <ScrollView>
                 <View style={styles.waterfall}>
                     <View style={styles.waterfall_item}>
