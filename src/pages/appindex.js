@@ -27,7 +27,6 @@ let travelsRight = [];
 
 const Item = (props) => {
     const navigation = useNavigation();
-    console.log("dfi",props.item)
     return (
         <View style={styles.section}>
             <Pressable style={styles.item} onPress={() => { navigation.navigate('TravelDetail') }}>
@@ -82,7 +81,7 @@ function AppIndex() {
                     user_id: item.userID,
                     avatarUrl: item.profile,
                     userName: item.username,
-                    height: 300,
+                    height: 200+Math.random()*50,
                 }
                 travelsLeft.push(left);
                 index++;
@@ -101,12 +100,12 @@ function AppIndex() {
                     user_id: item.userID,
                     avatarUrl: item.profile,
                     userName: item.username,
-                    height: 300,
+                    height: 200+Math.random()*70,
                 }
                 travelsRight.push(right);
                 index1++;
             });
-            console.log("左边",travelsLeft)
+            // console.log("左边",travelsLeft)
             setLeftState(travelsLeft)
             setRightState(travelsRight)
             // console.log("右边",travelsRight)
