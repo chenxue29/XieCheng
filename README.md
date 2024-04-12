@@ -6,7 +6,7 @@
 2. 审核管理系统为一个 PC 站点，不同角色可以对用户发布的游记做上线前的审核检查、删除等操作。
    代码地址：https://github.com/Jiajiashfdsdfusik/XieCheng_Manage
 # APP一些说明
-技术栈：Native React、Nodejs
+技术栈：React Native、Nodejs
 测试工具：expo go
 图片存储服务器：阿里云
 # APP注意事项
